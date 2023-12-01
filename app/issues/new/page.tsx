@@ -10,6 +10,7 @@ import { useState } from "react";
 import { createIssueSchema } from "@/app/validationSchemas";
 import { z } from "zod";
 import ErrorMessage from "@/app/components/ErrorMessage";
+import Spinner from "@/app/components/Spinner";
 type issue = z.infer<typeof createIssueSchema>;
 const createNewIssue = () => {
   const {
@@ -22,6 +23,7 @@ const createNewIssue = () => {
   });
   const router = useRouter();
   const [error, setError] = useState("");
+  const [isSubmitting, setSubmitting] = useState(false);
   return (
     <div className="max-w-xl">
       {error && (
@@ -34,10 +36,13 @@ const createNewIssue = () => {
         className="space-y-3"
         onSubmit={handleSubmit(async (data) => {
           try {
+            setSubmitting(true);
             await axios.post("/api/issues", data);
             router.push("/issues");
+            setSubmitting(false);
           } catch (error) {
             setError("An error occured!!!");
+            setSubmitting(false);
           }
         })}
       >
@@ -55,7 +60,10 @@ const createNewIssue = () => {
         />
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
 
-        <Button>Submit New issue</Button>
+        <Button disabled={isSubmitting}>
+          Submit New issue
+          {isSubmitting && <Spinner />}
+        </Button>
       </form>
     </div>
   );
