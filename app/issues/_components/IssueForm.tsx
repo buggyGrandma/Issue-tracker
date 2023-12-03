@@ -7,12 +7,12 @@ import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { createIssueSchema } from "@/app/validationSchemas";
+import { IssueValidationSchema } from "@/app/validationSchemas";
 import { z } from "zod";
 import ErrorMessage from "@/app/components/ErrorMessage";
 import Spinner from "@/app/components/Spinner";
 import { Issue } from "@prisma/client";
-type issueFormData = z.infer<typeof createIssueSchema>;
+type issueFormData = z.infer<typeof IssueValidationSchema>;
 const IssueForm = ({ issue }: { issue?: Issue }) => {
   const {
     register,
@@ -20,7 +20,7 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
     handleSubmit,
     formState: { errors },
   } = useForm<issueFormData>({
-    resolver: zodResolver(createIssueSchema),
+    resolver: zodResolver(IssueValidationSchema),
   });
   const router = useRouter();
   const [error, setError] = useState("");
